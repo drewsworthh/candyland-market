@@ -1,0 +1,2 @@
+-- Seed data for Candyland Market
+-- Add your INSERT statements here.

@@ -1,0 +1,2 @@
+-- Database schema for Candyland Market
+-- Add your CREATE TABLE statements here.
