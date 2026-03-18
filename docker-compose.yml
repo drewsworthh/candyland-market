@@ -1,18 +1,47 @@
-version: '3.8'
-
 services:
-  app:
+  web:
     build: .
+    container_name: candyland-web
     ports:
       - "8080:80"
     volumes:
-      - .:/var/www/html
+      - ./:/var/www/html
+    depends_on:
+      - db
     environment:
-      - APP_ENV=development
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: candyland
+      DB_USERNAME: candyuser
+      DB_PASSWORD: candypass
+
   db:
-    image: mysql:8.0
+    image: mysql:8.4
+    container_name: candyland-db
+    restart: always
     environment:
       MYSQL_DATABASE: candyland
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: candyuser
+      MYSQL_PASSWORD: candypass
+      MYSQL_ROOT_PASSWORD: rootpass
     ports:
-      - "3306:3306"
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seeds.sql:/docker-entrypoint-initdb.d/02-seeds.sql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: candyland-pma
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    depends_on:
+      - db
+
+volumes:
+  db_data:

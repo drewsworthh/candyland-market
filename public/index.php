@@ -6,3 +6,4 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 // TODO: bootstrap application
+echo "<h1>Candyland Market is running!</h1>";
