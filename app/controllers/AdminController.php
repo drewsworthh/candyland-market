@@ -27,7 +27,7 @@ class AdminController {
                         </div>
                         <div class="summary-card">
                             <h3>Customers</h3>
-                            <p><?php echo count(UserService::getUsers()) - 1; ?> customers</p>
+                            <p><?php echo count(array_filter(UserService::getUsers(), fn($u) => $u['role'] === 'customer')); ?> customers</p>
                         </div>
                         <div class="summary-card">
                             <h3>Orders</h3>
@@ -57,6 +57,7 @@ class AdminController {
                             <h3>Add / Update Product</h3>
                             <form method="post">
                                 <input type="hidden" name="action" value="admin_save_product">
+                                <?php csrfField(); ?>
                                 <label>Name<input type="text" name="name" required></label>
                                 <label>Description<textarea name="description" rows="4"></textarea></label>
                                 <label>Price<input type="number" name="price" step="0.01" required></label>
@@ -88,6 +89,7 @@ class AdminController {
                             <h3>Edit User</h3>
                             <form method="post">
                                 <input type="hidden" name="action" value="admin_save_user">
+                                <?php csrfField(); ?>
                                 <label>User ID<input type="number" name="user_id" required></label>
                                 <label>First Name<input type="text" name="first_name"></label>
                                 <label>Last Name<input type="text" name="last_name"></label>
@@ -157,6 +159,7 @@ class AdminController {
                             <h3>Create Discount Code</h3>
                             <form method="post">
                                 <input type="hidden" name="action" value="admin_save_discount">
+                                <?php csrfField(); ?>
                                 <label>Code<input type="text" name="code" required></label>
                                 <label>Type<select name="discount_type">
                                     <option value="percent">Percent</option>

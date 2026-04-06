@@ -29,7 +29,8 @@ CREATE TABLE carts (
   user_id INT NOT NULL,
   status ENUM('active','converted','abandoned') DEFAULT 'active',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  INDEX idx_carts_user_id (user_id)
 );
 
 CREATE TABLE cart_items (
@@ -38,7 +39,9 @@ CREATE TABLE cart_items (
   product_id INT NOT NULL,
   quantity INT NOT NULL,
   FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
-  FOREIGN KEY (product_id) REFERENCES products(id)
+  FOREIGN KEY (product_id) REFERENCES products(id),
+  UNIQUE KEY uq_cart_product (cart_id, product_id),
+  INDEX idx_cart_items_product_id (product_id)
 );
 
 CREATE TABLE discount_codes (
@@ -59,7 +62,8 @@ CREATE TABLE orders (
   total DECIMAL(10,2) NOT NULL,
   status ENUM('pending','paid','cancelled','fulfilled') DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  INDEX idx_orders_user_id (user_id)
 );
 
 CREATE TABLE order_items (
@@ -69,5 +73,7 @@ CREATE TABLE order_items (
   quantity INT NOT NULL,
   unit_price DECIMAL(10,2) NOT NULL,
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
-  FOREIGN KEY (product_id) REFERENCES products(id)
+  FOREIGN KEY (product_id) REFERENCES products(id),
+  INDEX idx_order_items_order_id (order_id),
+  INDEX idx_order_items_product_id (product_id)
 );

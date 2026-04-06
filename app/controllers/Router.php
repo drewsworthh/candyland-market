@@ -44,6 +44,7 @@ class Router {
     }
 
     private static function handlePost(string $action): void {
+        verifyCsrf();
         switch ($action) {
             case 'login':
                 AuthController::processLogin();
@@ -115,6 +116,10 @@ class Router {
             'email' => trim($_POST['email'] ?? ''),
             'role' => $_POST['role'] === 'admin' ? 'admin' : 'customer',
         ];
+        if ($data['first_name'] === '' || $data['last_name'] === '' || $data['email'] === '') {
+            flash('error', 'Name and email are required.');
+            redirect('index.php?page=admin&tab=users');
+        }
         if (trim($_POST['password'] ?? '') !== '') {
             $data['password_hash'] = password_hash(trim($_POST['password']), PASSWORD_DEFAULT);
         }

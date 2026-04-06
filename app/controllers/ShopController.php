@@ -11,11 +11,11 @@ class ShopController {
         ?>
         <section class="hero">
             <div>
-                <h1>Welcome to Candyland Market</h1>
-                <p>Discover sweet candies, shop effortlessly, and place orders with fast checkout.</p>
+                <h1>Life is Sweeter Here 🍭</h1>
+                <p>Hand-picked candies from around the world — from chewy gummies to silky chocolate. Fast checkout, fast delivery.</p>
             </div>
             <div>
-                <a href="index.php?page=register" class="button">Create an Account</a>
+                <a href="#products" class="button">Shop Now &rarr;</a>
             </div>
         </section>
 
@@ -37,7 +37,7 @@ class ShopController {
             </form>
         </section>
 
-        <section class="product-grid">
+        <section class="product-grid" id="products">
             <?php if (empty($products)): ?>
                 <div class="empty-state">
                     <h2>No products match your criteria.</h2>

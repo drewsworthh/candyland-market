@@ -21,8 +21,31 @@ function getFlashes(): array {
 }
 
 function redirect(string $url): void {
+    // Block absolute URLs to prevent open redirect attacks
+    if (preg_match('#^https?://#i', $url)) {
+        $url = 'index.php';
+    }
     header('Location: ' . $url);
     exit;
+}
+
+function csrfToken(): string {
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
+function csrfField(): void {
+    echo '<input type="hidden" name="csrf_token" value="' . csrfToken() . '">';
+}
+
+function verifyCsrf(): void {
+    $token = $_POST['csrf_token'] ?? '';
+    if (!hash_equals(csrfToken(), $token)) {
+        http_response_code(403);
+        die('Request validation failed.');
+    }
 }
 
 function currentUser(): ?array {
@@ -67,7 +90,7 @@ function renderHeader(string $title = 'Candyland Market'): void {
 <body>
 <header class="site-header">
     <div class="brand">
-        <a href="index.php">Candyland Market</a>
+        <a href="index.php">🍬 Candyland Market</a>
     </div>
     <nav class="site-nav">
         <a href="index.php">Shop</a>
@@ -120,6 +143,7 @@ function renderProductCard(array $product): void {
             </div>
             <form method="post" class="product-action">
                 <input type="hidden" name="action" value="add_to_cart">
+                <?php csrfField(); ?>
                 <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
                 <label>
                     Qty

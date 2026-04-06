@@ -60,15 +60,21 @@ class OrderService {
         $totals = CartService::calculateCartTotals($items, $coupon);
         try {
             $pdo->beginTransaction();
+            // Lock inventory rows first to prevent race conditions with concurrent orders
+            $lockStmt = $pdo->prepare('SELECT quantity FROM inventory WHERE product_id = ? FOR UPDATE');
+            foreach ($items as $item) {
+                $lockStmt->execute([$item['product_id']]);
+                $stock = (int)$lockStmt->fetchColumn();
+                if ($item['quantity'] > $stock) {
+                    throw new RuntimeException('Not enough stock for "' . $item['name'] . '".');
+                }
+            }
             $stmt = $pdo->prepare('INSERT INTO orders (user_id, subtotal, tax, discount, total) VALUES (?, ?, ?, ?, ?)');
             $stmt->execute([$userId, $totals['subtotal'], $totals['tax'], $totals['discount'], $totals['total']]);
             $orderId = (int)$pdo->lastInsertId();
             $itemStmt = $pdo->prepare('INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)');
             $inventoryStmt = $pdo->prepare('UPDATE inventory SET quantity = quantity - ? WHERE product_id = ?');
             foreach ($items as $item) {
-                if ($item['quantity'] > $item['stock']) {
-                    throw new RuntimeException('Not enough stock for "' . $item['name'] . '".');
-                }
                 $itemStmt->execute([$orderId, $item['product_id'], $item['quantity'], $item['price']]);
                 $inventoryStmt->execute([$item['quantity'], $item['product_id']]);
             }
