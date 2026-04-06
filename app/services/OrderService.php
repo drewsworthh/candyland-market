@@ -49,6 +49,35 @@ class OrderService {
         return $stmt->fetchAll();
     }
 
+    public static function getTotalRevenue(): float {
+        $pdo = Database::connect();
+        $stmt = $pdo->query("SELECT COALESCE(SUM(total), 0) FROM orders WHERE status != 'cancelled'");
+        return (float)$stmt->fetchColumn();
+    }
+
+    public static function getRecentOrders(int $limit = 5): array {
+        $pdo = Database::connect();
+        $stmt = $pdo->prepare(
+            'SELECT o.*, u.first_name, u.last_name
+             FROM orders o
+             JOIN users u ON o.user_id = u.id
+             ORDER BY o.created_at DESC
+             LIMIT ?'
+        );
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll();
+    }
+
+    public static function updateOrderStatus(int $orderId, string $status): bool {
+        $allowed = ['pending', 'paid', 'fulfilled', 'cancelled'];
+        if (!in_array($status, $allowed, true)) {
+            return false;
+        }
+        $pdo = Database::connect();
+        $stmt = $pdo->prepare('UPDATE orders SET status = ? WHERE id = ?');
+        return $stmt->execute([$status, $orderId]);
+    }
+
     public static function placeOrder(int $userId): ?int {
         $pdo = Database::connect();
         $cart = CartService::getActiveCart($userId);

@@ -76,6 +76,15 @@ class Router {
             case 'admin_save_discount':
                 self::processAdminSaveDiscount();
                 break;
+            case 'admin_update_order_status':
+                self::processAdminUpdateOrderStatus();
+                break;
+            case 'admin_toggle_discount':
+                self::processAdminToggleDiscount();
+                break;
+            case 'admin_delete_discount':
+                self::processAdminDeleteDiscount();
+                break;
         }
     }
 
@@ -129,6 +138,52 @@ class Router {
             flash('error', 'Unable to update the user.');
         }
         redirect('index.php?page=admin&tab=users');
+    }
+
+    private static function processAdminUpdateOrderStatus(): void {
+        requireAdmin();
+        $orderId = (int)($_POST['order_id'] ?? 0);
+        $status  = $_POST['status'] ?? '';
+        if ($orderId <= 0) {
+            flash('error', 'Invalid order.');
+            redirect('index.php?page=admin&tab=orders');
+        }
+        if (OrderService::updateOrderStatus($orderId, $status)) {
+            flash('success', 'Order #' . $orderId . ' updated to "' . $status . '".');
+        } else {
+            flash('error', 'Unable to update order status.');
+        }
+        redirect('index.php?page=admin&tab=orders');
+    }
+
+    private static function processAdminToggleDiscount(): void {
+        requireAdmin();
+        $id = (int)($_POST['discount_id'] ?? 0);
+        if ($id <= 0) {
+            flash('error', 'Invalid discount code.');
+            redirect('index.php?page=admin&tab=discounts');
+        }
+        if (DiscountService::toggleDiscountCode($id)) {
+            flash('success', 'Discount code status toggled.');
+        } else {
+            flash('error', 'Unable to toggle discount code.');
+        }
+        redirect('index.php?page=admin&tab=discounts');
+    }
+
+    private static function processAdminDeleteDiscount(): void {
+        requireAdmin();
+        $id = (int)($_POST['discount_id'] ?? 0);
+        if ($id <= 0) {
+            flash('error', 'Invalid discount code.');
+            redirect('index.php?page=admin&tab=discounts');
+        }
+        if (DiscountService::deleteDiscountCode($id)) {
+            flash('success', 'Discount code deleted.');
+        } else {
+            flash('error', 'Unable to delete discount code.');
+        }
+        redirect('index.php?page=admin&tab=discounts');
     }
 
     private static function processAdminSaveDiscount(): void {

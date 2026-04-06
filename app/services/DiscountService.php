@@ -18,6 +18,18 @@ class DiscountService {
         return $stmt->fetch() ?: null;
     }
 
+    public static function toggleDiscountCode(int $id): bool {
+        $pdo = Database::connect();
+        $stmt = $pdo->prepare('UPDATE discount_codes SET is_active = NOT is_active WHERE id = ?');
+        return $stmt->execute([$id]);
+    }
+
+    public static function deleteDiscountCode(int $id): bool {
+        $pdo = Database::connect();
+        $stmt = $pdo->prepare('DELETE FROM discount_codes WHERE id = ?');
+        return $stmt->execute([$id]);
+    }
+
     public static function addDiscountCode(array $data): bool {
         $pdo = Database::connect();
         $stmt = $pdo->prepare('INSERT INTO discount_codes (code, discount_type, discount_value, is_active, expires_at) VALUES (?, ?, ?, ?, ?)');
