@@ -5,11 +5,11 @@ class Database {
 
     public static function connect(): PDO {
         if (self::$pdo === null) {
-            $host = 'db';
-            $port = '3306';
-            $db   = 'candyland';
-            $user = 'candyuser';
-            $pass = 'candypass';
+            $host = $_ENV['DB_HOST'] ?? 'db';
+            $port = $_ENV['DB_PORT'] ?? '3306';
+            $db   = $_ENV['DB_DATABASE'] ?? 'candyland';
+            $user = $_ENV['DB_USERNAME'] ?? 'candyuser';
+            $pass = $_ENV['DB_PASSWORD'] ?? '';
 
             $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
 

@@ -12,7 +12,7 @@ VALUES
 
 INSERT INTO users (first_name, last_name, email, password_hash, role)
 VALUES
-('Admin', 'User', 'admin@candyland.com', '$2b$12$WVfEbe13uwdtWnUoRqEiG.i/QfClJanRDdZsw4ePmGqos3o9UyiYm', 'admin');
+('Admin', 'User', 'admin@candyland.com', '$2y$10$T8ZtPNz/3RKsKX3QQr4WpOnebQ7B3b4zPmfSERXOmXyCt60H4016G', 'admin');
 
 INSERT INTO discount_codes (code, discount_type, discount_value, is_active, expires_at)
 VALUES

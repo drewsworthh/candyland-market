@@ -22,6 +22,7 @@ class CartController {
             <?php else: ?>
                 <form method="post" class="cart-form">
                     <input type="hidden" name="action" value="update_cart">
+                    <?php csrfField(); ?>
                     <div class="cart-table">
                         <div class="cart-row cart-header">
                             <div>Item</div>
@@ -61,6 +62,7 @@ class CartController {
                         <h3>Discount Code</h3>
                         <form method="post" class="coupon-form">
                             <input type="hidden" name="action" value="apply_coupon">
+                            <?php csrfField(); ?>
                             <label>Code<input type="text" name="coupon_code" value="<?php echo h($coupon['code'] ?? ''); ?>"></label>
                             <button type="submit">Apply</button>
                         </form>
@@ -111,6 +113,7 @@ class CartController {
                 <p>Email: <?php echo h($user['email']); ?></p>
                 <form method="post">
                     <input type="hidden" name="action" value="place_order">
+                    <?php csrfField(); ?>
                     <button type="submit" class="button">Place Order</button>
                 </form>
             </div>

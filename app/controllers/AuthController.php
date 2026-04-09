@@ -10,6 +10,7 @@ class AuthController {
             <h2>Sign In</h2>
             <form method="post" class="card-form">
                 <input type="hidden" name="action" value="login">
+                <?php csrfField(); ?>
                 <label>Email<input type="email" name="email" required></label>
                 <label>Password<input type="password" name="password" required></label>
                 <button type="submit">Login</button>
@@ -27,6 +28,7 @@ class AuthController {
             <h2>Create an Account</h2>
             <form method="post" class="card-form">
                 <input type="hidden" name="action" value="register">
+                <?php csrfField(); ?>
                 <label>First Name<input type="text" name="first_name" required></label>
                 <label>Last Name<input type="text" name="last_name" required></label>
                 <label>Email<input type="email" name="email" required></label>
@@ -47,6 +49,7 @@ class AuthController {
             <h2>Your Profile</h2>
             <form method="post" class="card-form">
                 <input type="hidden" name="action" value="profile_update">
+                <?php csrfField(); ?>
                 <label>First Name<input type="text" name="first_name" value="<?php echo h($user['first_name']); ?>" required></label>
                 <label>Last Name<input type="text" name="last_name" value="<?php echo h($user['last_name']); ?>" required></label>
                 <label>Email<input type="email" name="email" value="<?php echo h($user['email']); ?>" required></label>
@@ -70,6 +73,7 @@ class AuthController {
             flash('error', 'Invalid email or password.');
             redirect('index.php?page=login');
         }
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];
         flash('success', 'Welcome back, ' . $user['first_name'] . '!');
         redirect('index.php');
@@ -95,6 +99,7 @@ class AuthController {
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             'role' => 'customer',
         ]);
+        session_regenerate_id(true);
         $_SESSION['user_id'] = $id;
         flash('success', 'Account created successfully.');
         redirect('index.php');
