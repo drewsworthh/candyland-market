@@ -9,14 +9,17 @@ class ShopController {
         $products = ProductService::getProducts($query, $sort);
         renderHeader('Candyland Market');
         ?>
+
         <section class="hero">
             <div>
                 <h1>Welcome to Candyland Market</h1>
                 <p>Discover sweet candies, shop effortlessly, and place orders with fast checkout.</p>
             </div>
+            <?php if (!currentUser()): ?>
             <div>
                 <a href="index.php?page=register" class="button">Create an Account</a>
             </div>
+            <?php endif; ?>
         </section>
 
         <section class="filter-bar">
