@@ -133,7 +133,8 @@ function fmt(float|int|string $value, int $decimals = 2): string {
 function renderProductCard(array $product): void {
     ?>
     <article class="product-card">
-        <img src="<?php echo h($product['image_url'] ?: DEFAULT_IMAGE); ?>" alt="<?php echo h($product['name']); ?>">
+        <img src="/<?php echo h($product['image_url'] ?: DEFAULT_IMAGE); ?>" 
+     alt="<?php echo h($product['name']); ?>">
         <div class="product-card-body">
             <h3><?php echo h($product['name']); ?></h3>
             <p><?php echo h($product['description']); ?></p>

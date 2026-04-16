@@ -4,7 +4,7 @@
     --primary: #e03e7c;
     --primary-dark: #c52d6a;
     --text: #2b2b2b;
-    --muted: #666;
+    --muted: #ffffff;
     --border: #e4d7cf;
     --success: #3a8d5e;
     --warning: #d48b1d;
@@ -84,10 +84,27 @@ a:hover {
     gap: 2rem;
     align-items: center;
     padding: 2rem;
-    background: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+    background: url('https://plus.unsplash.com/premium_photo-1675806016980-05232ccdf1f1?q=80&w=1365&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover no-repeat;
     color: white;
     border-radius: 24px;
     min-height: 240px;
+}
+
+.hero {
+    position: relative;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 24px;
+}
+
+.hero * {
+    position: relative;
+    z-index: 1;
 }
 
 .hero h1 {
@@ -209,6 +226,7 @@ input:focus {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    background-color: white;
 
     transition: all 0.25s ease;
 }
@@ -224,9 +242,15 @@ input:focus {
 .product-card img {
     width: 100%;
     aspect-ratio: 4 / 3;
-    object-fit: cover;
-    background: url('/assets/images/placeholder.jpg') center/cover no-repeat;
+    object-fit: contain;
+    background: white;
     transition: all 0.25s ease;
+}
+
+.product-image {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
 }
 
 .product-card-body {
