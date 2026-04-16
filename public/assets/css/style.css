@@ -23,12 +23,12 @@ body {
 }
 
 a {
-    color: var(--primary);
     text-decoration: none;
 }
 
 a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    
 }
 
 .site-header {
@@ -57,15 +57,19 @@ a:hover {
 }
 
 .site-nav a {
-    padding: 0.65rem 0.95rem;
+    padding: 0.65rem 1.1rem;
     border-radius: 999px;
     background: #f9edea;
     color: var(--text);
-    transition: background 0.2s;
+    font-weight: 600;
+    transition: all 0.25s ease;
 }
 
 .site-nav a:hover {
-    background: #fde5e1;
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
 .page-content {
@@ -139,8 +143,27 @@ a:hover {
     border-radius: 14px;
     background: var(--surface);
     color: var(--text);
+    transition: all 0.25s ease;
 }
 
+search-form input:focus,
+.sort-form select:focus,
+.card-form input:focus,
+.card-form select:focus,
+.card-form textarea:focus,
+.coupon-form input:focus,
+.checkout-form input:focus,
+.checkout-form select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(224, 62, 124, 0.15);
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(224, 62, 124, 0.15);
+}
 .search-form button,
 .card-form button,
 .coupon-form button,
@@ -153,7 +176,20 @@ a:hover {
     background: var(--primary);
     color: white;
     font-weight: 700;
+    transition: all 0.25s ease;
 }
+
+.search-form button:hover,
+.card-form button:hover,
+.coupon-form button:hover,
+.checkout-form button:hover,
+.button:hover {
+    background: var(--primary-dark);
+    color: white; /* ADD THIS */
+    transform: scale(1.05);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
 
 .button-secondary {
     background: #f9edea;
@@ -173,12 +209,24 @@ a:hover {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+
+    transition: all 0.25s ease;
+}
+
+.product-card:hover {
+     transform: translateY(-4px);
+    border: 1.5px solid var(--primary);
+    box-shadow: 
+        0 12px 28px rgba(0,0,0,0.12),
+        0 0 0 3px rgba(224, 62, 124, 0.15);
 }
 
 .product-card img {
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
+    background: url('/assets/images/placeholder.jpg') center/cover no-repeat;
+    transition: all 0.25s ease;
 }
 
 .product-card-body {
@@ -456,4 +504,23 @@ a:hover {
     .admin-shell {
         grid-template-columns: 1fr;
     }
+
+    .cart-form button,
+.cart-actions button {
+    border: none;
+    cursor: pointer;
+    border-radius: 999px;
+    padding: 0.7rem 1.2rem;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.cart-form button:hover,
+.cart-actions button:hover {
+    background: var(--primary-dark);
+    transform: scale(1.05);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
 }
