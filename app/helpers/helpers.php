@@ -121,6 +121,28 @@ function renderFooter(): void {
 <footer class="site-footer">
     <p>Built for Candyland Market with PHP and MySQL.</p>
 </footer>
+
+<script>
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('qty-btn')) {
+        const container = e.target.closest('.qty-control');
+        const input = container.querySelector('input');
+
+        let value = parseInt(input.value) || 1;
+        const min = parseInt(input.min) || 1;
+        const max = parseInt(input.max) || 999;
+
+        if (e.target.classList.contains('plus')) {
+            if (value < max) input.value = value + 1;
+        }
+
+        if (e.target.classList.contains('minus')) {
+            if (value > min) input.value = value - 1;
+        }
+    }
+});
+</script>
+
 </body>
 </html>
     <?php
@@ -133,7 +155,8 @@ function fmt(float|int|string $value, int $decimals = 2): string {
 function renderProductCard(array $product): void {
     ?>
     <article class="product-card">
-        <img src="<?php echo h($product['image_url'] ?: DEFAULT_IMAGE); ?>" alt="<?php echo h($product['name']); ?>">
+        <img src="/<?php echo h($product['image_url'] ?: DEFAULT_IMAGE); ?>" 
+     alt="<?php echo h($product['name']); ?>">
         <div class="product-card-body">
             <h3><?php echo h($product['name']); ?></h3>
             <p><?php echo h($product['description']); ?></p>
@@ -145,10 +168,15 @@ function renderProductCard(array $product): void {
                 <input type="hidden" name="action" value="add_to_cart">
                 <?php csrfField(); ?>
                 <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
-                <label>
-                    Qty
-                    <input type="number" name="quantity" value="1" min="1" max="<?php echo max(1, (int)$product['quantity']); ?>">
-                </label>
+            <div class="qty-control">
+                <button type="button" class="qty-btn minus">−</button>
+                <input type="number"
+                    name="quantity"
+                    value="1"
+                    min="1"
+                    max="<?php echo max(1, (int)$product['quantity']); ?>">
+                <button type="button" class="qty-btn plus">+</button>
+            </div>
                 <button type="submit" <?php echo (int)$product['quantity'] <= 0 ? 'disabled' : ''; ?>>Add to cart</button>
             </form>
         </div>
