@@ -1,8 +1,8 @@
 INSERT INTO products (name, description, price, image_url)
 VALUES
-('Pocky Strawberry', 'Japanese strawberry biscuit sticks', 3.99, 'assets/images/placeholder.jpg'),
-('Kinder Bueno', 'Chocolate wafer bar', 2.49, 'assets/images/placeholder.jpg'),
-('Hi-Chew Mango', 'Chewy mango candy', 1.99, 'assets/images/placeholder.jpg');
+('Pocky Strawberry', 'Japanese strawberry biscuit sticks', 3.99, 'assets/images/pocky-strawberry.jpg'),
+('Kinder Bueno', 'Chocolate wafer bar', 2.49, 'assets/images/kinder-bueno.jpg'),
+('Hi-Chew Mango', 'Chewy mango candy', 1.99, 'assets/images/hichew-mango.jpg');
 
 INSERT INTO inventory (product_id, quantity)
 VALUES
