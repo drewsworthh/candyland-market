@@ -15,7 +15,10 @@ class ShopController {
                 <h1>Welcome to Candyland Market</h1>
                 <p>Discover sweet candies, shop effortlessly, and place orders with fast checkout.</p>
             </div>
-            <?php if (!currentUser()): ?>
+            <?php
+            $user = currentUser();
+            if (!$user): 
+            ?>
             <div>
                 <a href="index.php?page=register" class="button">Create an Account</a>
             </div>
