@@ -697,11 +697,19 @@ input:focus {
 
 .admin-actions {
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-end;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.75rem;
     flex-wrap: wrap;
     margin-bottom: 0.75rem;
+}
+
+.admin-actions input[type="text"] {
+    flex: 1;
+    min-width: 220px;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
 }
 
 .admin-search-form {

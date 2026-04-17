@@ -174,12 +174,12 @@ class AdminController {
                                     <div><?php echo h($user['email']); ?></div>
                                     <div><?php echo h($user['role']); ?></div>
                                     <div>
-                                        <a href="index.php?page=admin&tab=users&edit=<?php echo (int)$user['id']; ?>" class="button button-secondary">Edit</a>
+                                        <a href="index.php?page=admin&tab=users&edit=<?php echo (int)$user['id']; ?>#user-edit-form" class="button button-secondary">Edit</a>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        <div class="admin-form card-form">
+                        <div class="admin-form card-form" id="user-edit-form">
                             <h3><?php echo $editUser ? 'Editing: ' . h($editUser['first_name'] . ' ' . $editUser['last_name']) : 'Edit User'; ?></h3>
                             <?php if (!$editUser): ?>
                                 <p style="color:var(--muted);font-size:0.9rem;margin:0;">Click <strong>Edit</strong> on a row above to load a user.</p>
@@ -216,19 +216,14 @@ class AdminController {
                 <?php elseif ($tab === 'orders'): ?>
                     <h2>Manage Orders</h2>
                     <?php $orderSearch = trim($_GET['q'] ?? ''); $orderSort = trim($_GET['sort'] ?? ''); ?>
-                    <div class="admin-actions">
-                        <form method="get" class="admin-search-form">
-                            <input type="hidden" name="page" value="admin">
-                            <input type="hidden" name="tab" value="orders">
-                            <input type="hidden" name="sort" value="<?php echo h($orderSort); ?>">
-                            <input type="text" name="q" placeholder="Search by name, email, order ID or status…" value="<?php echo h($orderSearch); ?>">
-                            <button type="submit">Search</button>
-                            <?php if ($orderSearch !== ''): ?>
-                                <a href="index.php?page=admin&tab=orders&sort=<?php echo h($orderSort); ?>" class="button button-secondary">Clear</a>
-                            <?php endif; ?>
-                        </form>
-                        <label>Sort by
-                            <select onchange="window.location.href='index.php?page=admin&tab=orders&sort=' + this.value + '&q=<?php echo urlencode($orderSearch); ?>'">
+                    <form method="get" id="order-filter-form" class="admin-actions">
+                        <input type="hidden" name="page" value="admin">
+                        <input type="hidden" name="tab" value="orders">
+                        <input type="text" name="q"
+                            placeholder="Search by name, email, order ID or status…"
+                            value="<?php echo h($orderSearch); ?>">
+                        <label style="display:flex;align-items:center;gap:0.4rem;white-space:nowrap;">Sort by
+                            <select name="sort" onchange="document.getElementById('order-filter-form').submit()">
                                 <option value=""<?php echo $orderSort === '' ? ' selected' : ''; ?>>Order Date</option>
                                 <option value="customer_asc"<?php echo $orderSort === 'customer_asc' ? ' selected' : ''; ?>>Customer A–Z</option>
                                 <option value="customer_desc"<?php echo $orderSort === 'customer_desc' ? ' selected' : ''; ?>>Customer Z–A</option>
@@ -236,7 +231,10 @@ class AdminController {
                                 <option value="total_asc"<?php echo $orderSort === 'total_asc' ? ' selected' : ''; ?>>Order Size Low→High</option>
                             </select>
                         </label>
-                    </div>
+                        <?php if ($orderSearch !== ''): ?>
+                            <a href="index.php?page=admin&tab=orders&sort=<?php echo h($orderSort); ?>" class="button button-secondary">Clear</a>
+                        <?php endif; ?>
+                    </form>
                     <div class="admin-table">
                         <div class="table-row table-header">
                             <div>ID</div>
