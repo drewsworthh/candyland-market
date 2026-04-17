@@ -50,6 +50,16 @@ class ProductService {
         return $stmt->fetch() ?: null;
     }
 
+    public static function deleteProduct(int $id): bool {
+        $pdo = Database::connect();
+        // Remove from active carts first (not historical records, safe to purge)
+        $pdo->prepare('DELETE FROM cart_items WHERE product_id = ?')->execute([$id]);
+        // Delete the product; inventory row cascades automatically via FK
+        $stmt = $pdo->prepare('DELETE FROM products WHERE id = ?');
+        $stmt->execute([$id]);
+        return $stmt->rowCount() > 0;
+    }
+
     public static function saveProduct(array $data): bool {
         $pdo = Database::connect();
         $imageUrl = trim($data['image_url'] ?? '') ?: DEFAULT_IMAGE;

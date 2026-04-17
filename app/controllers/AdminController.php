@@ -78,7 +78,7 @@ class AdminController {
                 <?php elseif ($tab === 'products'): ?>
                     <h2>Manage Products</h2>
                     <div class="admin-panel">
-                        <div class="admin-table">
+                        <div class="admin-table products-table">
                             <div class="table-row table-header">
                                 <div>Name</div>
                                 <div>Price</div>
@@ -91,14 +91,24 @@ class AdminController {
                                     <div><?php echo h($product['name']); ?></div>
                                     <div>$<?php echo fmt($product['price']); ?></div>
                                     <div><?php echo (int)$product['quantity']; ?></div>
-                                    <div><?php echo $product['is_active'] ? 'Active' : 'Inactive'; ?></div>
                                     <div>
-                                        <a href="index.php?page=admin&tab=products&edit=<?php echo (int)$product['id']; ?>" class="button button-secondary">Edit</a>
+                                        <span class="status-badge <?php echo $product['is_active'] ? 'badge-active' : 'badge-inactive'; ?>">
+                                            <?php echo $product['is_active'] ? 'Active' : 'Inactive'; ?>
+                                        </span>
+                                    </div>
+                                    <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                                        <a href="index.php?page=admin&tab=products&edit=<?php echo (int)$product['id']; ?>#product-edit-form" class="button button-secondary">Edit</a>
+                                        <form method="post" onsubmit="return confirm('Permanently delete \'<?php echo h($product['name']); ?>\'? This cannot be undone.');">
+                                            <input type="hidden" name="action" value="admin_delete_product">
+                                            <?php csrfField(); ?>
+                                            <input type="hidden" name="product_id" value="<?php echo (int)$product['id']; ?>">
+                                            <button type="submit" class="button button-danger">Delete</button>
+                                        </form>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        <div class="admin-form card-form">
+                        <div class="admin-form card-form" id="product-edit-form">
                             <h3><?php echo $editProduct ? 'Editing: ' . h($editProduct['name']) : 'Add New Product'; ?></h3>
                             <form method="post">
                                 <input type="hidden" name="action" value="admin_save_product">
@@ -122,7 +132,7 @@ class AdminController {
                                     <input type="number" name="quantity" min="0" value="<?php echo (int)($editProduct['quantity'] ?? 0); ?>" required>
                                 </label>
                                 <label class="checkbox">
-                                    <input type="checkbox" name="is_active" <?php echo ($editProduct['is_active'] ?? 1) ? 'checked' : ''; ?>> Active
+                                    <input type="checkbox" name="is_active" <?php echo ($editProduct['is_active'] ?? 1) ? 'checked' : ''; ?>> Active <span style="color:var(--muted);font-size:0.85rem;">(uncheck to make inactive / hide from shop)</span>
                                 </label>
                                 <button type="submit"><?php echo $editProduct ? 'Update Product' : 'Add Product'; ?></button>
                                 <?php if ($editProduct): ?>
@@ -134,6 +144,16 @@ class AdminController {
 
                 <?php elseif ($tab === 'users'): ?>
                     <h2>Manage Users</h2>
+                    <?php $userSearch = trim($_GET['q'] ?? ''); ?>
+                    <form method="get" class="admin-search-form">
+                        <input type="hidden" name="page" value="admin">
+                        <input type="hidden" name="tab" value="users">
+                        <input type="text" name="q" placeholder="Search by name, email or role…" value="<?php echo h($userSearch); ?>">
+                        <button type="submit">Search</button>
+                        <?php if ($userSearch !== ''): ?>
+                            <a href="index.php?page=admin&tab=users" class="button button-secondary">Clear</a>
+                        <?php endif; ?>
+                    </form>
                     <div class="admin-panel">
                         <div class="admin-table">
                             <div class="table-row table-header">
@@ -143,7 +163,11 @@ class AdminController {
                                 <div>Role</div>
                                 <div>Actions</div>
                             </div>
-                            <?php foreach (UserService::getUsers() as $user): ?>
+                            <?php $userList = UserService::getUsers($userSearch); ?>
+                            <?php if (empty($userList)): ?>
+                                <p style="padding:1rem;color:var(--muted);">No users match "<?php echo h($userSearch); ?>".</p>
+                            <?php endif; ?>
+                            <?php foreach ($userList as $user): ?>
                                 <div class="table-row <?php echo $editUser && (int)$editUser['id'] === (int)$user['id'] ? 'row-editing' : ''; ?>">
                                     <div><?php echo (int)$user['id']; ?></div>
                                     <div><?php echo h($user['first_name'] . ' ' . $user['last_name']); ?></div>
@@ -191,14 +215,25 @@ class AdminController {
 
                 <?php elseif ($tab === 'orders'): ?>
                     <h2>Manage Orders</h2>
+                    <?php $orderSearch = trim($_GET['q'] ?? ''); $orderSort = trim($_GET['sort'] ?? ''); ?>
                     <div class="admin-actions">
+                        <form method="get" class="admin-search-form">
+                            <input type="hidden" name="page" value="admin">
+                            <input type="hidden" name="tab" value="orders">
+                            <input type="hidden" name="sort" value="<?php echo h($orderSort); ?>">
+                            <input type="text" name="q" placeholder="Search by name, email, order ID or status…" value="<?php echo h($orderSearch); ?>">
+                            <button type="submit">Search</button>
+                            <?php if ($orderSearch !== ''): ?>
+                                <a href="index.php?page=admin&tab=orders&sort=<?php echo h($orderSort); ?>" class="button button-secondary">Clear</a>
+                            <?php endif; ?>
+                        </form>
                         <label>Sort by
-                            <select onchange="window.location.href='index.php?page=admin&tab=orders&sort=' + this.value">
-                                <option value=""<?php echo empty($_GET['sort']) ? ' selected' : ''; ?>>Order Date</option>
-                                <option value="customer_asc"<?php echo ($_GET['sort'] ?? '') === 'customer_asc' ? ' selected' : ''; ?>>Customer A–Z</option>
-                                <option value="customer_desc"<?php echo ($_GET['sort'] ?? '') === 'customer_desc' ? ' selected' : ''; ?>>Customer Z–A</option>
-                                <option value="total_desc"<?php echo ($_GET['sort'] ?? '') === 'total_desc' ? ' selected' : ''; ?>>Order Size High→Low</option>
-                                <option value="total_asc"<?php echo ($_GET['sort'] ?? '') === 'total_asc' ? ' selected' : ''; ?>>Order Size Low→High</option>
+                            <select onchange="window.location.href='index.php?page=admin&tab=orders&sort=' + this.value + '&q=<?php echo urlencode($orderSearch); ?>'">
+                                <option value=""<?php echo $orderSort === '' ? ' selected' : ''; ?>>Order Date</option>
+                                <option value="customer_asc"<?php echo $orderSort === 'customer_asc' ? ' selected' : ''; ?>>Customer A–Z</option>
+                                <option value="customer_desc"<?php echo $orderSort === 'customer_desc' ? ' selected' : ''; ?>>Customer Z–A</option>
+                                <option value="total_desc"<?php echo $orderSort === 'total_desc' ? ' selected' : ''; ?>>Order Size High→Low</option>
+                                <option value="total_asc"<?php echo $orderSort === 'total_asc' ? ' selected' : ''; ?>>Order Size Low→High</option>
                             </select>
                         </label>
                     </div>
@@ -210,7 +245,11 @@ class AdminController {
                             <div>Total</div>
                             <div>Status</div>
                         </div>
-                        <?php foreach (OrderService::getAllOrders(trim($_GET['sort'] ?? '')) as $order): ?>
+                        <?php $orderList = OrderService::getAllOrders($orderSort, $orderSearch); ?>
+                        <?php if (empty($orderList)): ?>
+                            <p style="padding:1rem;color:var(--muted);">No orders match "<?php echo h($orderSearch); ?>".</p>
+                        <?php endif; ?>
+                        <?php foreach ($orderList as $order): ?>
                             <div class="table-row">
                                 <div><?php echo (int)$order['id']; ?></div>
                                 <div><?php echo h($order['first_name'] . ' ' . $order['last_name']); ?></div>

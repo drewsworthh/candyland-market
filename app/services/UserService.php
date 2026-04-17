@@ -50,9 +50,21 @@ class UserService {
         return $stmt->execute($values);
     }
 
-    public static function getUsers(): array {
+    public static function getUsers(string $search = ''): array {
         $pdo = Database::connect();
-        $stmt = $pdo->query('SELECT * FROM users ORDER BY created_at DESC');
+        if ($search === '') {
+            $stmt = $pdo->query('SELECT * FROM users ORDER BY created_at DESC');
+            return $stmt->fetchAll();
+        }
+        $like = "%{$search}%";
+        $stmt = $pdo->prepare(
+            "SELECT * FROM users
+             WHERE first_name LIKE ? OR last_name LIKE ?
+                OR email LIKE ? OR role LIKE ?
+                OR CONCAT(first_name, ' ', last_name) LIKE ?
+             ORDER BY created_at DESC"
+        );
+        $stmt->execute([$like, $like, $like, $like, $like]);
         return $stmt->fetchAll();
     }
 }
