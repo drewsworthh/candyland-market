@@ -2,7 +2,7 @@ INSERT INTO products (name, description, price, image_url)
 VALUES
 ('Pocky Strawberry', 'Japanese strawberry biscuit sticks', 3.99, 'assets/images/pocky-strawberry.jpg'),
 ('Kinder Bueno', 'Chocolate wafer bar', 2.49, 'assets/images/kinder-bueno.jpg'),
-('Hi-Chew Mango', 'Chewy mango candy', 1.99, 'assets/images/hichew-mango.jpg');
+('Hi-Chew Mango', 'Chewy mango candy', 1.99, 'assets/images/hichew-mango.jpg'),
 ('Haribo Goldbears', 'Classic gummy bears', 2.99, 'assets/images/haribo.jpg'),
 ('Sour Patch Kids', 'Sour then sweet candy', 2.79, 'assets/images/sourpatch.webp'),
 ('Toblerone Milk', 'Swiss milk chocolate', 4.49, 'assets/images/tolberone.webp'),

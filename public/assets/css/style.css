@@ -283,7 +283,7 @@ input:focus {
 }
 
 .product-meta .stock {
-    color: var(--muted);
+    color: black;
 }
 
 .product-action label {
