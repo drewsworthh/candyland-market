@@ -73,7 +73,8 @@ class OrderService {
              ORDER BY o.created_at DESC
              LIMIT ?'
         );
-        $stmt->execute([$limit]);
+        $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetchAll();
     }
 
