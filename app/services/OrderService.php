@@ -6,9 +6,17 @@ require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/CartService.php';
 
 class OrderService {
-    public static function getAllOrders(string $sort = ''): array {
+    public static function getAllOrders(string $sort = '', string $search = ''): array {
         $pdo = Database::connect();
         $sql = 'SELECT o.*, u.first_name, u.last_name, u.email FROM orders o JOIN users u ON o.user_id = u.id';
+        $params = [];
+        if ($search !== '') {
+            $like = "%{$search}%";
+            $sql .= " WHERE (u.first_name LIKE ? OR u.last_name LIKE ? OR u.email LIKE ?
+                        OR CONCAT(u.first_name, ' ', u.last_name) LIKE ?
+                        OR CAST(o.id AS CHAR) LIKE ? OR o.status LIKE ?)";
+            $params = [$like, $like, $like, $like, $like, $like];
+        }
         switch ($sort) {
             case 'customer_asc':
                 $sql .= ' ORDER BY u.last_name ASC, u.first_name ASC';
@@ -26,7 +34,8 @@ class OrderService {
                 $sql .= ' ORDER BY o.created_at DESC';
                 break;
         }
-        $stmt = $pdo->query($sql);
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 

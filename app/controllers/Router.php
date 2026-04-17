@@ -85,6 +85,9 @@ class Router {
             case 'admin_delete_discount':
                 self::processAdminDeleteDiscount();
                 break;
+            case 'admin_delete_product':
+                self::processAdminDeleteProduct();
+                break;
         }
     }
 
@@ -184,6 +187,26 @@ class Router {
             flash('error', 'Unable to delete discount code.');
         }
         redirect('index.php?page=admin&tab=discounts');
+    }
+
+    private static function processAdminDeleteProduct(): void {
+        requireAdmin();
+        $id = (int)($_POST['product_id'] ?? 0);
+        if ($id <= 0) {
+            flash('error', 'Invalid product.');
+            redirect('index.php?page=admin&tab=products');
+        }
+        try {
+            if (ProductService::deleteProduct($id)) {
+                flash('success', 'Product deleted.');
+            } else {
+                flash('error', 'Product not found.');
+            }
+        } catch (PDOException $e) {
+            // FK constraint fires when the product has existing order history
+            flash('error', 'Cannot delete a product that has existing orders. Deactivate it using the Active checkbox instead.');
+        }
+        redirect('index.php?page=admin&tab=products');
     }
 
     private static function processAdminSaveDiscount(): void {
