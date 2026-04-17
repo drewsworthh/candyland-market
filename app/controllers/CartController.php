@@ -40,7 +40,14 @@ class CartController {
                                     </div>
                                 </div>
                                 <div>$<?php echo fmt($item['price']); ?></div>
-                                <div><input type="number" name="quantity[<?php echo (int)$item['id']; ?>]" value="<?php echo (int)$item['quantity']; ?>" min="0" max="<?php echo max(1, (int)$item['stock']); ?>"></div>
+                                <div class="qty-cell">
+                                    <div class="qty-control">
+                                        <button type="button" class="qty-btn minus">−</button>
+                                        <input type="number" name="quantity[<?php echo (int)$item['id']; ?>]" value="<?php echo (int)$item['quantity']; ?>" min="0" max="<?php echo max(1, (int)$item['stock']); ?>">
+                                        <button type="button" class="qty-btn plus">+</button>
+                                    </div>
+                                    <button type="submit" name="remove_item" value="<?php echo (int)$item['id']; ?>" class="trash-btn" title="Remove item">🗑</button>
+                                </div>
                                 <div>$<?php echo fmt($item['price'] * $item['quantity']); ?></div>
                             </div>
                         <?php endforeach; ?>
@@ -143,6 +150,14 @@ class CartController {
         requireLogin();
         $user = currentUser();
         $cart = CartService::getActiveCart($user['id']);
+
+        if (!empty($_POST['remove_item'])) {
+            $itemId = (int)$_POST['remove_item'];
+            CartService::updateCartItem($cart['id'], $itemId, 0);
+            flash('success', 'Item removed from your cart.');
+            redirect('index.php?page=cart');
+        }
+
         foreach ($_POST['quantity'] ?? [] as $itemId => $quantity) {
             CartService::updateCartItem($cart['id'], (int)$itemId, max(0, (int)$quantity));
         }
