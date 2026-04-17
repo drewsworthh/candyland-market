@@ -9,6 +9,7 @@ class ShopController {
         $products = ProductService::getProducts($query, $sort);
         renderHeader('Candyland Market');
         ?>
+
         <section class="hero">
             <div>
                 <h1>Welcome to Candyland Market</h1>
