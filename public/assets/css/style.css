@@ -213,6 +213,39 @@ input:focus {
     color: var(--text);
 }
 
+.button-danger {
+    background: var(--danger);
+    color: #fff;
+}
+
+.button-danger:hover {
+    background: #a81e1e;
+    color: #fff;
+}
+
+.products-table .table-row {
+    grid-template-columns: minmax(160px, 2fr) minmax(70px, 0.7fr) minmax(60px, 0.6fr) minmax(80px, 0.8fr) minmax(140px, 1.2fr);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-active {
+    background: #d4f0e2;
+    color: #1e6e44;
+}
+
+.badge-inactive {
+    background: #fde8e8;
+    color: var(--danger);
+}
+
 .product-grid {
     display: grid;
     gap: 1.5rem;
@@ -417,6 +450,13 @@ input:focus {
     font-weight: 600;
 }
 
+.card-form label.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+}
+
 .card-form textarea {
     resize: vertical;
 }
@@ -613,22 +653,27 @@ input:focus {
 
 .admin-shell {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 160px 1fr;
     gap: 1.5rem;
 }
 
 .admin-nav {
     display: grid;
     gap: 0.75rem;
+    align-self: start;
+    width: 160px;
+    flex-shrink: 0;
 }
 
 .admin-nav a {
     display: block;
-    padding: 0.9rem 1rem;
+    padding: 0.6rem 0.9rem;
     border-radius: 14px;
     background: #fff;
     border: 1px solid var(--border);
     color: var(--text);
+    font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 .admin-nav a.active {
@@ -652,8 +697,35 @@ input:focus {
 
 .admin-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+
+.admin-actions input[type="text"] {
+    flex: 1;
+    min-width: 220px;
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.admin-search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+
+.admin-search-form input[type="text"] {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    min-width: 260px;
 }
 
 .checkbox {
