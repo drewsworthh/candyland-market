@@ -114,7 +114,8 @@ class OrderService {
             $itemStmt = $pdo->prepare('INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)');
             $inventoryStmt = $pdo->prepare('UPDATE inventory SET quantity = quantity - ? WHERE product_id = ?');
             foreach ($items as $item) {
-                $itemStmt->execute([$orderId, $item['product_id'], $item['quantity'], $item['price']]);
+                $unitPrice = $item['sale_price'] ?? $item['price'];
+                $itemStmt->execute([$orderId, $item['product_id'], $item['quantity'], $unitPrice]);
                 $inventoryStmt->execute([$item['quantity'], $item['product_id']]);
             }
             $stmt = $pdo->prepare('UPDATE carts SET status = "converted" WHERE id = ?');

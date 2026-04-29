@@ -94,18 +94,31 @@ class Router {
     private static function processAdminSaveProduct(): void {
         requireAdmin();
         $productId = isset($_POST['id']) ? (int)$_POST['id'] : null;
+        $existingProduct = $productId ? ProductService::getProductById($productId) : null;
+        $imageUrl = $existingProduct['image_url'] ?? '';
+
+        if (!empty($_FILES['product_image']['name']) && $_FILES['product_image']['error'] !== UPLOAD_ERR_NO_FILE) {
+            $uploadResult = self::saveProductImage($_FILES['product_image']);
+            if (!$uploadResult['success']) {
+                flash('error', $uploadResult['message']);
+                redirect('index.php?page=admin&tab=products' . ($productId ? '&edit=' . $productId . '#product-edit-form' : ''));
+            }
+            $imageUrl = $uploadResult['path'];
+        }
+
         $data = [
             'id' => $productId,
             'name' => trim($_POST['name'] ?? ''),
             'description' => trim($_POST['description'] ?? ''),
             'price' => (float)($_POST['price'] ?? 0),
-            'image_url' => trim($_POST['image_url'] ?? ''),
+            'sale_price' => !empty($_POST['sale_price']) ? (float)$_POST['sale_price'] : null,
+            'image_url' => trim($imageUrl),
             'quantity' => max(0, (int)($_POST['quantity'] ?? 0)),
             'is_active' => isset($_POST['is_active']) ? 1 : 0,
         ];
         if ($data['name'] === '' || $data['price'] <= 0) {
             flash('error', 'Name and price are required.');
-            redirect('index.php?page=admin&tab=products');
+            redirect('index.php?page=admin&tab=products' . ($productId ? '&edit=' . $productId . '#product-edit-form' : ''));
         }
         if (ProductService::saveProduct($data)) {
             flash('success', 'Product saved successfully.');
@@ -113,6 +126,41 @@ class Router {
             flash('error', 'Unable to save the product.');
         }
         redirect('index.php?page=admin&tab=products');
+    }
+
+    private static function saveProductImage(array $file): array {
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            return ['success' => false, 'message' => 'Image upload failed.'];
+        }
+
+        if ($file['size'] > 5 * 1024 * 1024) {
+            return ['success' => false, 'message' => 'Image must be 5MB or smaller.'];
+        }
+
+        $mimeTypes = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/webp' => 'webp',
+        ];
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['tmp_name']);
+        if (!isset($mimeTypes[$mime])) {
+            return ['success' => false, 'message' => 'Only JPG, PNG, GIF, and WebP images are allowed.'];
+        }
+
+        $uploadDir = __DIR__ . '/../../public/assets/images/uploads';
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true) && !is_dir($uploadDir)) {
+            return ['success' => false, 'message' => 'Unable to create image upload directory.'];
+        }
+
+        $filename = bin2hex(random_bytes(16)) . '.' . $mimeTypes[$mime];
+        $targetPath = $uploadDir . '/' . $filename;
+        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+            return ['success' => false, 'message' => 'Unable to save the uploaded image.'];
+        }
+
+        return ['success' => true, 'path' => 'assets/images/uploads/' . $filename];
     }
 
     private static function processAdminSaveUser(): void {

@@ -65,11 +65,12 @@ class ProductService {
         $imageUrl = trim($data['image_url'] ?? '') ?: DEFAULT_IMAGE;
         $isActive = !empty($data['is_active']) ? 1 : 0;
         if (!empty($data['id'])) {
-            $stmt = $pdo->prepare('UPDATE products SET name = ?, description = ?, price = ?, image_url = ?, is_active = ? WHERE id = ?');
+            $stmt = $pdo->prepare('UPDATE products SET name = ?, description = ?, price = ?, sale_price = ?, image_url = ?, is_active = ? WHERE id = ?');
             $result = $stmt->execute([
                 $data['name'],
                 $data['description'],
                 $data['price'],
+                $data['sale_price'],
                 $imageUrl,
                 $isActive,
                 $data['id'],
@@ -80,11 +81,12 @@ class ProductService {
             }
             return $result;
         }
-        $stmt = $pdo->prepare('INSERT INTO products (name, description, price, image_url, is_active) VALUES (?, ?, ?, ?, ?)');
+        $stmt = $pdo->prepare('INSERT INTO products (name, description, price, sale_price, image_url, is_active) VALUES (?, ?, ?, ?, ?, ?)');
         $result = $stmt->execute([
             $data['name'],
             $data['description'],
             $data['price'],
+            $data['sale_price'],
             $imageUrl,
             $isActive,
         ]);

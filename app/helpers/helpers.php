@@ -119,7 +119,7 @@ function renderFooter(): void {
     ?>
 </main>
 <footer class="site-footer">
-    <p>Built for Candyland Market with PHP and MySQL.</p>
+    
 </footer>
 
 <script>
@@ -153,6 +153,9 @@ function fmt(float|int|string $value, int $decimals = 2): string {
 }
 
 function renderProductCard(array $product): void {
+    $price = $product['price'];
+    $salePrice = $product['sale_price'] ?? null;
+    $displayPrice = $salePrice ?? $price;
     ?>
     <article class="product-card">
         <img src="/<?php echo h($product['image_url'] ?: DEFAULT_IMAGE); ?>" 
@@ -161,7 +164,14 @@ function renderProductCard(array $product): void {
             <h3><?php echo h($product['name']); ?></h3>
             <p><?php echo h($product['description']); ?></p>
             <div class="product-meta">
-                <span class="price">$<?php echo fmt($product['price']); ?></span>
+                <span class="price">
+                    <?php if ($salePrice): ?>
+                        <span class="original-price">$<?php echo fmt($price); ?></span>
+                        <span class="sale-price">$<?php echo fmt($salePrice); ?></span>
+                    <?php else: ?>
+                        $<?php echo fmt($price); ?>
+                    <?php endif; ?>
+                </span>
                 <span class="stock"><?php echo (int)$product['quantity']; ?> in stock</span>
             </div>
             <form method="post" class="product-action">

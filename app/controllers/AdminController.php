@@ -49,12 +49,12 @@ class AdminController {
                             <p>$<?php echo fmt(OrderService::getTotalRevenue()); ?></p>
                         </div>
                     </div>
-                    <h3>Recent Orders</h3>
+                    <h2>Recent Orders</h2>
                     <?php $recentOrders = OrderService::getRecentOrders(5); ?>
                     <?php if (empty($recentOrders)): ?>
                         <p style="color:var(--muted);">No orders yet.</p>
                     <?php else: ?>
-                        <div class="admin-table">
+                        <div class="admin-table recent-orders-table">
                             <div class="table-row table-header">
                                 <div>ID</div>
                                 <div>Customer</div>
@@ -82,6 +82,7 @@ class AdminController {
                             <div class="table-row table-header">
                                 <div>Name</div>
                                 <div>Price</div>
+                                <div>Sale Price</div>
                                 <div>Stock</div>
                                 <div>Status</div>
                                 <div>Actions</div>
@@ -90,13 +91,14 @@ class AdminController {
                                 <div class="table-row <?php echo $editProduct && (int)$editProduct['id'] === (int)$product['id'] ? 'row-editing' : ''; ?>">
                                     <div><?php echo h($product['name']); ?></div>
                                     <div>$<?php echo fmt($product['price']); ?></div>
+                                    <div><?php echo $product['sale_price'] ? '$' . fmt($product['sale_price']) : '-'; ?></div>
                                     <div><?php echo (int)$product['quantity']; ?></div>
                                     <div>
                                         <span class="status-badge <?php echo $product['is_active'] ? 'badge-active' : 'badge-inactive'; ?>">
                                             <?php echo $product['is_active'] ? 'Active' : 'Inactive'; ?>
                                         </span>
                                     </div>
-                                    <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                                    <div class="row-actions">
                                         <a href="index.php?page=admin&tab=products&edit=<?php echo (int)$product['id']; ?>#product-edit-form" class="button button-secondary">Edit</a>
                                         <form method="post" onsubmit="return confirm('Permanently delete \'<?php echo h($product['name']); ?>\'? This cannot be undone.');">
                                             <input type="hidden" name="action" value="admin_delete_product">
@@ -110,7 +112,7 @@ class AdminController {
                         </div>
                         <div class="admin-form card-form" id="product-edit-form">
                             <h3><?php echo $editProduct ? 'Editing: ' . h($editProduct['name']) : 'Add New Product'; ?></h3>
-                            <form method="post">
+                            <form method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="action" value="admin_save_product">
                                 <?php csrfField(); ?>
                                 <?php if ($editProduct): ?>
@@ -125,14 +127,21 @@ class AdminController {
                                 <label>Price
                                     <input type="number" name="price" step="0.01" value="<?php echo h((string)($editProduct['price'] ?? '')); ?>" required>
                                 </label>
-                                <label>Image URL
-                                    <input type="text" name="image_url" value="<?php echo h($editProduct['image_url'] ?? ''); ?>" placeholder="https://...">
+                                <label>Sale Price (optional)
+                                    <input type="number" name="sale_price" step="0.01" value="<?php echo h((string)($editProduct['sale_price'] ?? '')); ?>" placeholder="Leave empty for no sale">
+                                </label>
+                                <label>Product Image
+                                    <input type="file" name="product_image" accept="image/*">
+                                    <?php if ($editProduct && $editProduct['image_url']): ?>
+                                        <small style="display:block;color:var(--muted);margin-top:0.25rem;">Current image: <?php echo h($editProduct['image_url']); ?></small>
+                                    <?php endif; ?>
                                 </label>
                                 <label>Quantity
                                     <input type="number" name="quantity" min="0" value="<?php echo (int)($editProduct['quantity'] ?? 0); ?>" required>
                                 </label>
                                 <label class="checkbox">
-                                    <input type="checkbox" name="is_active" <?php echo ($editProduct['is_active'] ?? 1) ? 'checked' : ''; ?>> Active <span style="color:var(--muted);font-size:0.85rem;">(uncheck to make inactive / hide from shop)</span>
+                                    <input type="checkbox" name="is_active" <?php echo ($editProduct['is_active'] ?? 1) ? 'checked' : ''; ?>> Active
+                                    <span style="color:var(--muted);font-size:0.8rem;display:block;margin-top:0.25rem;"></span>
                                 </label>
                                 <button type="submit"><?php echo $editProduct ? 'Update Product' : 'Add Product'; ?></button>
                                 <?php if ($editProduct): ?>
@@ -155,7 +164,7 @@ class AdminController {
                         <?php endif; ?>
                     </form>
                     <div class="admin-panel">
-                        <div class="admin-table">
+                        <div class="admin-table users-table">
                             <div class="table-row table-header">
                                 <div>ID</div>
                                 <div>Name</div>
@@ -171,7 +180,7 @@ class AdminController {
                                 <div class="table-row <?php echo $editUser && (int)$editUser['id'] === (int)$user['id'] ? 'row-editing' : ''; ?>">
                                     <div><?php echo (int)$user['id']; ?></div>
                                     <div><?php echo h($user['first_name'] . ' ' . $user['last_name']); ?></div>
-                                    <div><?php echo h($user['email']); ?></div>
+                                    <div class="email-cell"><?php echo h($user['email']); ?></div>
                                     <div><?php echo h($user['role']); ?></div>
                                     <div>
                                         <a href="index.php?page=admin&tab=users&edit=<?php echo (int)$user['id']; ?>#user-edit-form" class="button button-secondary">Edit</a>
@@ -222,8 +231,9 @@ class AdminController {
                         <input type="text" name="q"
                             placeholder="Search by name, email, order ID or status…"
                             value="<?php echo h($orderSearch); ?>">
+                        <button type="submit">Search</button>
                         <label style="display:flex;align-items:center;gap:0.4rem;white-space:nowrap;">Sort by
-                            <select name="sort" onchange="document.getElementById('order-filter-form').submit()">
+                            <select name="sort" class="admin-select" onchange="document.getElementById('order-filter-form').submit()">
                                 <option value=""<?php echo $orderSort === '' ? ' selected' : ''; ?>>Order Date</option>
                                 <option value="customer_asc"<?php echo $orderSort === 'customer_asc' ? ' selected' : ''; ?>>Customer A–Z</option>
                                 <option value="customer_desc"<?php echo $orderSort === 'customer_desc' ? ' selected' : ''; ?>>Customer Z–A</option>
@@ -235,7 +245,7 @@ class AdminController {
                             <a href="index.php?page=admin&tab=orders&sort=<?php echo h($orderSort); ?>" class="button button-secondary">Clear</a>
                         <?php endif; ?>
                     </form>
-                    <div class="admin-table">
+                    <div class="admin-table orders-table">
                         <div class="table-row table-header">
                             <div>ID</div>
                             <div>Customer</div>
@@ -254,17 +264,23 @@ class AdminController {
                                 <div><?php echo h(date('Y-m-d', strtotime($order['created_at']))); ?></div>
                                 <div>$<?php echo fmt($order['total']); ?></div>
                                 <div>
-                                    <form method="post" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
-                                        <input type="hidden" name="action" value="admin_update_order_status">
-                                        <?php csrfField(); ?>
-                                        <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
-                                        <select name="status">
-                                            <?php foreach (['pending', 'paid', 'fulfilled', 'cancelled'] as $s): ?>
-                                                <option value="<?php echo $s; ?>"<?php echo $order['status'] === $s ? ' selected' : ''; ?>><?php echo ucfirst($s); ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <button type="submit">Save</button>
-                                    </form>
+                                    <?php if (in_array($order['status'], ['fulfilled', 'cancelled'], true)): ?>
+                                        <span class="status-badge <?php echo $order['status'] === 'fulfilled' ? 'badge-active' : 'badge-inactive'; ?>">
+                                            <?php echo ucfirst($order['status']); ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <form method="post" class="order-status-form">
+                                            <input type="hidden" name="action" value="admin_update_order_status">
+                                            <?php csrfField(); ?>
+                                            <input type="hidden" name="order_id" value="<?php echo (int)$order['id']; ?>">
+                                            <select name="status" class="admin-select">
+                                                <?php foreach (['pending', 'paid', 'fulfilled', 'cancelled'] as $s): ?>
+                                                    <option value="<?php echo $s; ?>"<?php echo $order['status'] === $s ? ' selected' : ''; ?>><?php echo ucfirst($s); ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <button type="submit" class="button button-secondary">Save</button>
+                                        </form>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endforeach; ?>
@@ -273,7 +289,7 @@ class AdminController {
                 <?php else: ?>
                     <h2>Discount Codes</h2>
                     <div class="admin-panel">
-                        <div class="admin-table">
+                        <div class="admin-table discounts-table">
                             <div class="table-row table-header">
                                 <div>Code</div>
                                 <div>Type</div>
@@ -284,12 +300,12 @@ class AdminController {
                             </div>
                             <?php foreach (DiscountService::getDiscountCodes() as $discount): ?>
                                 <div class="table-row">
-                                    <div><?php echo h($discount['code']); ?></div>
+                                    <div class="code-cell"><?php echo h($discount['code']); ?></div>
                                     <div><?php echo h($discount['discount_type']); ?></div>
                                     <div><?php echo h($discount['discount_value']); ?></div>
                                     <div><?php echo h($discount['expires_at'] ?? 'Never'); ?></div>
                                     <div><?php echo $discount['is_active'] ? 'Active' : 'Inactive'; ?></div>
-                                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                                    <div class="row-actions">
                                         <form method="post">
                                             <input type="hidden" name="action" value="admin_toggle_discount">
                                             <?php csrfField(); ?>

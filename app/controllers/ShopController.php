@@ -38,7 +38,8 @@ class ShopController {
                     <option value="" <?php echo $sort === '' ? 'selected' : ''; ?>>Newest</option>
                     <option value="price_asc" <?php echo $sort === 'price_asc' ? 'selected' : ''; ?>>Price low to high</option>
                     <option value="price_desc" <?php echo $sort === 'price_desc' ? 'selected' : ''; ?>>Price high to low</option>
-                    <option value="avail_desc" <?php echo $sort === 'avail_desc' ? 'selected' : ''; ?>>Availability</option>
+                    <option value="avail_asc" <?php echo $sort === 'avail_asc' ? 'selected' : ''; ?>>Least available</option>
+                    <option value="avail_desc" <?php echo $sort === 'avail_desc' ? 'selected' : ''; ?>>Most available</option>
                 </select>
             </form>
         </section>

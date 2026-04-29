@@ -224,7 +224,30 @@ input:focus {
 }
 
 .products-table .table-row {
-    grid-template-columns: minmax(160px, 2fr) minmax(70px, 0.7fr) minmax(60px, 0.6fr) minmax(80px, 0.8fr) minmax(140px, 1.2fr);
+    grid-template-columns: 1fr .5fr .5fr .5fr .5fr 1fr;
+}
+
+.users-table .table-row {
+    grid-template-columns: 60px 1fr 2fr 100px 120px;
+}
+
+.recent-orders-table .table-row {
+    grid-template-columns: 60px 1fr 1fr 1fr 100px;
+}
+
+.orders-table .table-row {
+    grid-template-columns: 60px 1fr 1fr 1fr 1fr;
+}
+
+.discounts-table .table-row {
+    grid-template-columns: 1fr 100px 100px 120px 80px 140px;
+}
+
+.email-cell,
+.code-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .status-badge {
@@ -298,7 +321,7 @@ input:focus {
 
 .product-card p {
     margin: 0;
-    color: var(--muted);
+    color: var(--text);
     font-size: 0.97rem;
     line-height: 1.6;
 }
@@ -315,6 +338,36 @@ input:focus {
     color: var(--primary-dark);
 }
 
+.product-meta .original-price {
+    text-decoration: line-through;
+    color: var(--primary);
+    margin-right: 0.5rem;
+}
+.product-meta .sale-price {
+    color: var(--warning);
+    margin-right: 0.5rem;
+    display: inline-block;
+    transition: transform 0.3s ease, color 0.25s ease;
+}
+.product-card:hover .product-meta .sale-price,
+.product-meta .sale-price:hover {
+    animation: sale-bounce 0.7s ease-in-out 1;
+    color: #f37021;
+}
+@keyframes sale-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-4px);
+    }
+    50% {
+        transform: translateY(0);
+    }
+    75% {
+        transform: translateY(-2px);
+    }
+}
 .product-meta .stock {
     color: black;
 }
@@ -455,6 +508,29 @@ input:focus {
     align-items: center;
     gap: 0.5rem;
     width: fit-content;
+    background: #f9edea;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: 1px solid var(--border);
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.card-form label.checkbox:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.card-form label.checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+    cursor: pointer;
 }
 
 .card-form textarea {
@@ -497,6 +573,10 @@ input:focus {
     border: 1px solid var(--border);
     border-radius: 16px;
     align-items: center;
+}
+
+.admin-table .table-row:hover {
+    background: rgba(249, 237, 234, 0.5);
 }
 
 .cart-row > div:nth-child(2),
@@ -570,11 +650,42 @@ input:focus {
     gap: 1rem;
 }
 
+.admin-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: .5rem;
+}
+
 .summary-card {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-color: var(--primary);
+}
+
+.summary-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-card p {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-dark);
 }
 
 .summary-total {
@@ -686,6 +797,11 @@ input:focus {
     gap: 1.5rem;
 }
 
+.admin-content h2 {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+}
+
 .admin-panel {
     display: grid;
     gap: 1.5rem;
@@ -706,10 +822,62 @@ input:focus {
 .admin-actions input[type="text"] {
     flex: 1;
     min-width: 220px;
-    padding: 0.45rem 0.75rem;
+    padding: 0.65rem 1rem;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 999px;
     font-size: 0.9rem;
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.25s ease;
+}
+
+.admin-actions input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(224, 62, 124, 0.15);
+}
+
+.admin-actions button {
+    border: none;
+    cursor: pointer;
+    border-radius: 999px;
+    padding: 0.65rem 1.4rem;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.admin-actions button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.admin-select {
+    padding: 0.65rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.25s ease;
+}
+
+.admin-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(224, 62, 124, 0.15);
+}
+
+.order-status-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+.row-actions {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .admin-search-form {
@@ -721,11 +889,37 @@ input:focus {
 }
 
 .admin-search-form input[type="text"] {
-    padding: 0.45rem 0.75rem;
+    padding: 0.65rem 1rem;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 999px;
     font-size: 0.9rem;
     min-width: 260px;
+    background: var(--surface);
+    color: var(--text);
+    transition: all 0.25s ease;
+}
+
+.admin-search-form input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(224, 62, 124, 0.15);
+}
+
+.admin-search-form button {
+    border: none;
+    cursor: pointer;
+    border-radius: 999px;
+    padding: 0.65rem 1.4rem;
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.admin-search-form button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15);
 }
 
 .checkbox {

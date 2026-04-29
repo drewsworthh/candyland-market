@@ -22,7 +22,7 @@ class CartService {
     public static function getCartItems(int $cartId): array {
         $pdo = Database::connect();
         $stmt = $pdo->prepare(
-            'SELECT ci.id, ci.quantity, p.id AS product_id, p.name, p.description, p.price, p.image_url, p.is_active, COALESCE(i.quantity, 0) AS stock
+            'SELECT ci.id, ci.quantity, p.id AS product_id, p.name, p.description, p.price, p.sale_price, p.image_url, p.is_active, COALESCE(i.quantity, 0) AS stock
              FROM cart_items ci
              JOIN products p ON ci.product_id = p.id
              LEFT JOIN inventory i ON p.id = i.product_id
@@ -95,7 +95,8 @@ class CartService {
     public static function calculateCartTotals(array $items, ?array $coupon = null): array {
         $subtotal = 0.0;
         foreach ($items as $item) {
-            $subtotal += (float)$item['price'] * (int)$item['quantity'];
+            $price = $item['sale_price'] ?? $item['price'];
+            $subtotal += (float)$price * (int)$item['quantity'];
         }
         $discount = 0.0;
         if ($coupon) {

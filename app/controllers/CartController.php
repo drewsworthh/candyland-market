@@ -39,7 +39,7 @@ class CartController {
                                         <p><?php echo h($item['description']); ?></p>
                                     </div>
                                 </div>
-                                <div>$<?php echo fmt($item['price']); ?></div>
+                                <div>$<?php echo fmt($item['sale_price'] ?? $item['price']); ?></div>
                                 <div class="qty-cell">
                                     <div class="qty-control">
                                         <button type="button" class="qty-btn minus">−</button>
@@ -48,7 +48,7 @@ class CartController {
                                     </div>
                                     <button type="submit" name="remove_item" value="<?php echo (int)$item['id']; ?>" class="trash-btn" title="Remove item">🗑</button>
                                 </div>
-                                <div>$<?php echo fmt($item['price'] * $item['quantity']); ?></div>
+                                <div>$<?php echo fmt(($item['sale_price'] ?? $item['price']) * $item['quantity']); ?></div>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -61,7 +61,9 @@ class CartController {
                     <div class="summary-card">
                         <h3>Order Summary</h3>
                         <p>Subtotal: $<?php echo fmt($totals['subtotal']); ?></p>
-                        <p>Discount: $<?php echo fmt($totals['discount']); ?></p>
+                        <?php if ($coupon): ?>
+                            <p>Discount: $<?php echo fmt($totals['discount']); ?></p>
+                        <?php endif; ?>
                         <p>Tax (8.25%): $<?php echo fmt($totals['tax']); ?></p>
                         <p class="summary-total">Total: $<?php echo fmt($totals['total']); ?></p>
                     </div>
@@ -104,7 +106,7 @@ class CartController {
                 <h2>Review Your Order</h2>
                 <ul>
                     <?php foreach ($items as $item): ?>
-                        <li><?php echo h($item['name']); ?> × <?php echo (int)$item['quantity']; ?> — $<?php echo fmt($item['price'] * $item['quantity']); ?></li>
+                        <li><?php echo h($item['name']); ?> × <?php echo (int)$item['quantity']; ?> — $<?php echo fmt(($item['sale_price'] ?? $item['price']) * $item['quantity']); ?></li>
                     <?php endforeach; ?>
                 </ul>
                 <div class="order-totals">
