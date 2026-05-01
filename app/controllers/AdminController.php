@@ -118,6 +118,9 @@ class AdminController {
                                 </div>
                             <?php endforeach; ?>
                         </div>
+                        <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;">
+                            <a href="index.php?page=admin&tab=products#product-edit-form" class="button">Create Product</a>
+                        </div>
                         <div class="admin-form card-form" id="product-edit-form">
                             <h3><?php echo $editProduct ? 'Editing: ' . h($editProduct['name']) : 'Add New Product'; ?></h3>
                             <form method="post" enctype="multipart/form-data">
@@ -198,13 +201,14 @@ class AdminController {
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        <div class="admin-form card-form" id="user-edit-form">
-                            <?php if ($editUser): ?>
+                    <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;">
+                        <a href="index.php?page=admin&tab=users&create=1#user-add-form" class="button">Create User</a>
+                    </div>
+                        <div class="admin-form card-form" id="user-add-form">
+                            <?php $createUser = isset($_GET['create']); ?>
                             <h3><?php echo $editUser ? 'Editing: ' . h($editUser['first_name'] . ' ' . $editUser['last_name']) : ''; ?></h3>
-                            <?php endif; ?>
-                            <?php if (!$editUser): ?>
-                                <p style="color:var(--muted);font-size:0.9rem;margin:0;">Click <strong>Edit</strong> on a row above to load a user.</p>
-                            <?php else: ?>
+                            <?php if (!$editUser && !$createUser): ?>
+                            <?php elseif ($editUser): ?>
                                 <form method="post">
                                     <input type="hidden" name="action" value="admin_save_user">
                                     <?php csrfField(); ?>
@@ -229,8 +233,37 @@ class AdminController {
                                         </select>
                                     </label>
                                     <?php endif; ?>
-                                    <button type="submit">Update User</button>
-                                    <a href="index.php?page=admin&tab=users" class="button button-secondary">Cancel</a>
+                                    <div class="form-buttons">
+                                        <button type="submit">Update User</button>
+                                        <a href="index.php?page=admin&tab=users" class="button button-secondary">Cancel</a>
+                                    </div>
+                                </form>
+                            <?php elseif ($createUser): ?>
+                                <form method="post">
+                                    <input type="hidden" name="action" value="admin_create_user">
+                                    <?php csrfField(); ?>
+                                    <label>First Name
+                                        <input type="text" name="first_name" required>
+                                    </label>
+                                    <label>Last Name
+                                        <input type="text" name="last_name" required>
+                                    </label>
+                                    <label>Email
+                                        <input type="email" name="email" required>
+                                    </label>
+                                    <label>Password
+                                        <input type="password" name="password" required>
+                                    </label>
+                                    <label>Role
+                                        <select name="role">
+                                            <option value="customer">Customer</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </label>
+                                    <div class="form-buttons">
+                                        <button type="submit">Create User</button>
+                                        <a href="index.php?page=admin&tab=users" class="button button-secondary">Cancel</a>
+                                    </div>
                                 </form>
                             <?php endif; ?>
                         </div>
@@ -324,13 +357,13 @@ class AdminController {
                                             <input type="hidden" name="action" value="admin_toggle_discount">
                                             <?php csrfField(); ?>
                                             <input type="hidden" name="discount_id" value="<?php echo (int)$discount['id']; ?>">
-                                            <button type="submit"><?php echo $discount['is_active'] ? 'Disable' : 'Enable'; ?></button>
+                                            <button type="submit" class="button button-secondary"><?php echo $discount['is_active'] ? 'Disable' : 'Enable'; ?></button>
                                         </form>
                                         <form method="post" onsubmit="return confirm('Delete discount code <?php echo h($discount['code']); ?>?');">
                                             <input type="hidden" name="action" value="admin_delete_discount">
                                             <?php csrfField(); ?>
                                             <input type="hidden" name="discount_id" value="<?php echo (int)$discount['id']; ?>">
-                                            <button type="submit">Delete</button>
+                                            <button type="submit" class="button button-danger">Delete</button>
                                         </form>
                                     </div>
                                 </div>

@@ -73,6 +73,9 @@ class Router {
             case 'admin_save_user':
                 self::processAdminSaveUser();
                 break;
+            case 'admin_create_user':
+                self::processAdminCreateUser();
+                break;
             case 'admin_save_discount':
                 self::processAdminSaveDiscount();
                 break;
@@ -187,6 +190,36 @@ class Router {
             flash('success', 'User updated successfully.');
         } else {
             flash('error', 'Unable to update the user.');
+        }
+        redirect('index.php?page=admin&tab=users');
+    }
+
+    private static function processAdminCreateUser(): void {
+        requireAdmin();
+        $first_name = trim($_POST['first_name'] ?? '');
+        $last_name = trim($_POST['last_name'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = trim($_POST['password'] ?? '');
+        $role = $_POST['role'] === 'admin' ? 'admin' : 'customer';
+        if ($first_name === '' || $last_name === '' || $email === '' || $password === '') {
+            flash('error', 'All fields are required.');
+            redirect('index.php?page=admin&tab=users&create=1');
+        }
+        if (UserService::getUserByEmail($email)) {
+            flash('error', 'This email is already registered.');
+            redirect('index.php?page=admin&tab=users&create=1');
+        }
+        $data = [
+            'first_name' => $first_name,
+            'last_name' => $last_name,
+            'email' => $email,
+            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+            'role' => $role,
+        ];
+        if (UserService::createUser($data)) {
+            flash('success', 'User created successfully.');
+        } else {
+            flash('error', 'Unable to create the user.');
         }
         redirect('index.php?page=admin&tab=users');
     }

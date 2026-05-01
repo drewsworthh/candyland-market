@@ -53,7 +53,7 @@ class UserService {
     public static function getUsers(string $search = ''): array {
         $pdo = Database::connect();
         if ($search === '') {
-            $stmt = $pdo->query('SELECT * FROM users ORDER BY created_at DESC');
+            $stmt = $pdo->query('SELECT * FROM users ORDER BY id ASC');
             return $stmt->fetchAll();
         }
         $like = "%{$search}%";

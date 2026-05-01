@@ -285,7 +285,7 @@ input:focus {
 }
 
 .discounts-table .table-row {
-    grid-template-columns: 1fr 100px 100px 120px 80px 140px;
+    grid-template-columns: 1fr 1fr 1fr 2fr 1fr 1fr;
 }
 
 .email-cell,
@@ -933,6 +933,12 @@ input:focus {
 .row-actions {
     display: flex;
     gap: 0.5rem;
+}
+
+.row-actions .button {
+    padding: 1rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 .admin-search-form {

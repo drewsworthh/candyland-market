@@ -47,13 +47,13 @@ VALUES
 (6, 'Jordan', 'Kim',     'jordan.kim@example.com',    '$2y$10$NV/I/LGfyX8lO0BZbx0hQOkWQw7sflRFDli9wi1NnN.f1XNm2iqfC', 'customer');
 
 -- Demo orders  (subtotal, tax @ 8.25%, discount, total)
-INSERT INTO orders (id, user_id, subtotal, tax, discount, total, status)
+INSERT INTO orders (id, user_id, subtotal, tax, discount, total, status, created_at)
 VALUES
-(1, 2, 12.47, 1.03, 0.00, 13.50, 'fulfilled'),
-(2, 3, 11.96, 0.99, 0.00, 12.95, 'paid'),
-(3, 4,  6.37, 0.53, 0.00,  6.90, 'pending'),
-(4, 5,  9.46, 0.78, 0.00, 10.24, 'cancelled'),
-(5, 6,  9.56, 0.79, 0.00, 10.35, 'fulfilled');
+(1, 2, 12.47, 1.03, 0.00, 13.50, 'fulfilled', '2024-05-01 04:46:55'),
+(2, 3, 11.96, 0.99, 0.00, 12.95, 'paid', '2025-02-01 04:46:55'),
+(3, 4,  6.37, 0.53, 0.00,  6.90, 'pending', '2025-04-01 04:46:55'),
+(4, 5,  9.46, 0.78, 0.00, 10.24, 'cancelled', '2025-07-10 04:46:55'),
+(5, 6,  9.56, 0.79, 0.00, 10.35, 'fulfilled', '2026-02-11 04:46:55');
 
 -- Order items
 INSERT INTO order_items (order_id, product_id, quantity, unit_price)
