@@ -7,7 +7,11 @@ require_once __DIR__ . '/../config/database.php';
 class ProductService {
     public static function getProducts(string $search = '', string $sort = '', bool $includeInactive = false): array {
         $pdo = Database::connect();
-        $sql = 'SELECT p.*, COALESCE(i.quantity, 0) AS quantity FROM products p LEFT JOIN inventory i ON p.id = i.product_id';
+        $sql = 'SELECT p.*, 
+            COALESCE(p.sale_price, p.price) AS final_price,
+            COALESCE(i.quantity, 0) AS quantity 
+            FROM products p 
+            LEFT JOIN inventory i ON p.id = i.product_id';
         $clauses = [];
         $params = [];
         if (!$includeInactive) {
@@ -23,10 +27,10 @@ class ProductService {
         }
         switch ($sort) {
             case 'price_asc':
-                $sql .= ' ORDER BY p.price ASC';
+                $sql .= ' ORDER BY final_price ASC';
                 break;
             case 'price_desc':
-                $sql .= ' ORDER BY p.price DESC';
+                $sql .= ' ORDER BY final_price DESC';
                 break;
             case 'avail_asc':
                 $sql .= ' ORDER BY quantity ASC';

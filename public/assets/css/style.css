@@ -181,6 +181,51 @@ input:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(224, 62, 124, 0.15);
 }
+
+.card-form .file-input-label {
+    display: grid;
+    gap: 0.5rem;
+    font-weight: 600;
+}
+
+.card-form .file-input {
+    width: 100%;
+    padding: 0.95rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #fff7f4;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.card-form .file-input:hover {
+    border-color: rgba(224, 62, 124, 0.6);
+}
+
+.card-form .file-input::-webkit-file-upload-button,
+.card-form .file-input::file-selector-button {
+    margin-right: 1rem;
+    border: none;
+    background: var(--primary);
+    color: white;
+    padding: 0.85rem 1.2rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.card-form .file-input:hover::-webkit-file-upload-button,
+.card-form .file-input:hover::file-selector-button {
+    background: var(--primary-dark);
+}
+
+.card-form .file-input:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(224, 62, 124, 0.15);
+}
+
 .search-form button,
 .card-form button,
 .coupon-form button,
@@ -267,6 +312,11 @@ input:focus {
 .badge-inactive {
     background: #fde8e8;
     color: var(--danger);
+}
+
+.badge-default {
+    background: #fff4c8;
+    color: #8a6f00;
 }
 
 .product-grid {
@@ -809,6 +859,11 @@ input:focus {
 
 .admin-form {
     padding: 1.5rem;
+}
+.admin-form label {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 .admin-actions {

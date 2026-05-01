@@ -68,7 +68,15 @@ class AdminController {
                                     <div><?php echo h($order['first_name'] . ' ' . $order['last_name']); ?></div>
                                     <div><?php echo h(date('Y-m-d', strtotime($order['created_at']))); ?></div>
                                     <div>$<?php echo fmt($order['total']); ?></div>
-                                    <div><?php echo h($order['status']); ?></div>
+                                    <div>
+                                        <?php if ($order['status'] === 'fulfilled'): ?>
+                                            <span class="status-badge badge-active"><?php echo ucfirst($order['status']); ?></span>
+                                        <?php elseif ($order['status'] === 'cancelled'): ?>
+                                            <span class="status-badge badge-inactive"><?php echo ucfirst($order['status']); ?></span>
+                                        <?php else: ?>
+                                            <span class="status-badge badge-default"><?php echo ucfirst($order['status']); ?></span>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -130,8 +138,8 @@ class AdminController {
                                 <label>Sale Price (optional)
                                     <input type="number" name="sale_price" step="0.01" value="<?php echo h((string)($editProduct['sale_price'] ?? '')); ?>" placeholder="Leave empty for no sale">
                                 </label>
-                                <label>Product Image
-                                    <input type="file" name="product_image" accept="image/*">
+                                <label class="file-input-label">Product Image
+                                    <input type="file" name="product_image" accept="image/*" class="file-input">
                                     <?php if ($editProduct && $editProduct['image_url']): ?>
                                         <small style="display:block;color:var(--muted);margin-top:0.25rem;">Current image: <?php echo h($editProduct['image_url']); ?></small>
                                     <?php endif; ?>
@@ -143,10 +151,12 @@ class AdminController {
                                     <input type="checkbox" name="is_active" <?php echo ($editProduct['is_active'] ?? 1) ? 'checked' : ''; ?>> Active
                                     <span style="color:var(--muted);font-size:0.8rem;display:block;margin-top:0.25rem;"></span>
                                 </label>
-                                <button type="submit"><?php echo $editProduct ? 'Update Product' : 'Add Product'; ?></button>
-                                <?php if ($editProduct): ?>
-                                    <a href="index.php?page=admin&tab=products" class="button button-secondary">Cancel</a>
-                                <?php endif; ?>
+                                <div class="form-buttons">
+                                    <button type="submit"><?php echo $editProduct ? 'Update Product' : 'Add Product'; ?></button>
+                                    <?php if ($editProduct): ?>
+                                        <a href="index.php?page=admin&tab=products" class="button button-secondary">Cancel</a>
+                                    <?php endif; ?>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -189,7 +199,9 @@ class AdminController {
                             <?php endforeach; ?>
                         </div>
                         <div class="admin-form card-form" id="user-edit-form">
-                            <h3><?php echo $editUser ? 'Editing: ' . h($editUser['first_name'] . ' ' . $editUser['last_name']) : 'Edit User'; ?></h3>
+                            <?php if ($editUser): ?>
+                            <h3><?php echo $editUser ? 'Editing: ' . h($editUser['first_name'] . ' ' . $editUser['last_name']) : ''; ?></h3>
+                            <?php endif; ?>
                             <?php if (!$editUser): ?>
                                 <p style="color:var(--muted);font-size:0.9rem;margin:0;">Click <strong>Edit</strong> on a row above to load a user.</p>
                             <?php else: ?>
@@ -209,12 +221,14 @@ class AdminController {
                                     <label>New Password
                                         <input type="password" name="password" placeholder="Leave blank to keep current">
                                     </label>
+                                    <?php if ($editUser['id'] != currentUser()['id']): ?>
                                     <label>Role
                                         <select name="role">
                                             <option value="customer" <?php echo $editUser['role'] === 'customer' ? 'selected' : ''; ?>>Customer</option>
                                             <option value="admin" <?php echo $editUser['role'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
                                         </select>
                                     </label>
+                                    <?php endif; ?>
                                     <button type="submit">Update User</button>
                                     <a href="index.php?page=admin&tab=users" class="button button-secondary">Cancel</a>
                                 </form>
@@ -235,10 +249,10 @@ class AdminController {
                         <label style="display:flex;align-items:center;gap:0.4rem;white-space:nowrap;">Sort by
                             <select name="sort" class="admin-select" onchange="document.getElementById('order-filter-form').submit()">
                                 <option value=""<?php echo $orderSort === '' ? ' selected' : ''; ?>>Order Date</option>
-                                <option value="customer_asc"<?php echo $orderSort === 'customer_asc' ? ' selected' : ''; ?>>Customer A–Z</option>
-                                <option value="customer_desc"<?php echo $orderSort === 'customer_desc' ? ' selected' : ''; ?>>Customer Z–A</option>
-                                <option value="total_desc"<?php echo $orderSort === 'total_desc' ? ' selected' : ''; ?>>Order Size High→Low</option>
-                                <option value="total_asc"<?php echo $orderSort === 'total_asc' ? ' selected' : ''; ?>>Order Size Low→High</option>
+                                <option value="customer_asc"<?php echo $orderSort === 'customer_asc' ? ' selected' : ''; ?>>Last Name A–Z</option>
+                                <option value="customer_desc"<?php echo $orderSort === 'customer_desc' ? ' selected' : ''; ?>>Last Name Z–A</option>
+                                <option value="total_desc"<?php echo $orderSort === 'total_desc' ? ' selected' : ''; ?>>Order Price High→Low</option>
+                                <option value="total_asc"<?php echo $orderSort === 'total_asc' ? ' selected' : ''; ?>>Order Price Low→High</option>
                             </select>
                         </label>
                         <?php if ($orderSearch !== ''): ?>
