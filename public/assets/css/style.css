@@ -629,7 +629,11 @@ input:focus {
     border-radius: 16px;
     align-items: center;
 }
-
+@media (max-width: 500px) {
+.cart-header{
+    display: none;
+}
+}
 .admin-table .table-row:hover {
     background: rgba(249, 237, 234, 0.5);
 }

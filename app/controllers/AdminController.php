@@ -12,6 +12,8 @@ class AdminController {
             ? ProductService::getProductById((int)$_GET['edit'])
             : null;
 
+        $createProduct = ($tab === 'products' && isset($_GET['create']));
+
         $editUser = ($tab === 'users' && isset($_GET['edit']))
             ? UserService::getUserById((int)$_GET['edit'])
             : null;
@@ -119,49 +121,49 @@ class AdminController {
                             <?php endforeach; ?>
                         </div>
                         <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;">
-                            <a href="index.php?page=admin&tab=products#product-edit-form" class="button">Create Product</a>
+                            <a href="index.php?page=admin&tab=products&create=1#product-edit-form" class="button">Create Product</a>
                         </div>
-                        <div class="admin-form card-form" id="product-edit-form">
-                            <h3><?php echo $editProduct ? 'Editing: ' . h($editProduct['name']) : 'Add New Product'; ?></h3>
-                            <form method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="action" value="admin_save_product">
-                                <?php csrfField(); ?>
-                                <?php if ($editProduct): ?>
-                                    <input type="hidden" name="id" value="<?php echo (int)$editProduct['id']; ?>">
-                                <?php endif; ?>
-                                <label>Name
-                                    <input type="text" name="name" value="<?php echo h($editProduct['name'] ?? ''); ?>" required>
-                                </label>
-                                <label>Description
-                                    <textarea name="description" rows="4"><?php echo h($editProduct['description'] ?? ''); ?></textarea>
-                                </label>
-                                <label>Price
-                                    <input type="number" name="price" step="0.01" value="<?php echo h((string)($editProduct['price'] ?? '')); ?>" required>
-                                </label>
-                                <label>Sale Price (optional)
-                                    <input type="number" name="sale_price" step="0.01" value="<?php echo h((string)($editProduct['sale_price'] ?? '')); ?>" placeholder="Leave empty for no sale">
-                                </label>
-                                <label class="file-input-label">Product Image
-                                    <input type="file" name="product_image" accept="image/*" class="file-input">
-                                    <?php if ($editProduct && $editProduct['image_url']): ?>
-                                        <small style="display:block;color:var(--muted);margin-top:0.25rem;">Current image: <?php echo h($editProduct['image_url']); ?></small>
-                                    <?php endif; ?>
-                                </label>
-                                <label>Quantity
-                                    <input type="number" name="quantity" min="0" value="<?php echo (int)($editProduct['quantity'] ?? 0); ?>" required>
-                                </label>
-                                <label class="checkbox">
-                                    <input type="checkbox" name="is_active" <?php echo ($editProduct['is_active'] ?? 1) ? 'checked' : ''; ?>> Active
-                                    <span style="color:var(--muted);font-size:0.8rem;display:block;margin-top:0.25rem;"></span>
-                                </label>
-                                <div class="form-buttons">
-                                    <button type="submit"><?php echo $editProduct ? 'Update Product' : 'Add Product'; ?></button>
+                        <?php if ($editProduct || $createProduct): ?>
+                            <div class="admin-form card-form" id="product-edit-form">
+                                <h3><?php echo $editProduct ? 'Editing: ' . h($editProduct['name']) : 'Add New Product'; ?></h3>
+                                <form method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="action" value="admin_save_product">
+                                    <?php csrfField(); ?>
                                     <?php if ($editProduct): ?>
-                                        <a href="index.php?page=admin&tab=products" class="button button-secondary">Cancel</a>
+                                        <input type="hidden" name="id" value="<?php echo (int)$editProduct['id']; ?>">
                                     <?php endif; ?>
-                                </div>
-                            </form>
-                        </div>
+                                    <label>Name
+                                        <input type="text" name="name" value="<?php echo h($editProduct['name'] ?? ''); ?>" required>
+                                    </label>
+                                    <label>Description
+                                        <textarea name="description" rows="4"><?php echo h($editProduct['description'] ?? ''); ?></textarea>
+                                    </label>
+                                    <label>Price
+                                        <input type="number" name="price" step="0.01" value="<?php echo h((string)($editProduct['price'] ?? '')); ?>" required>
+                                    </label>
+                                    <label>Sale Price (optional)
+                                        <input type="number" name="sale_price" step="0.01" value="<?php echo h((string)($editProduct['sale_price'] ?? '')); ?>" placeholder="Leave empty for no sale">
+                                    </label>
+                                    <label class="file-input-label">Product Image
+                                        <input type="file" name="product_image" accept="image/*" class="file-input">
+                                        <?php if ($editProduct && $editProduct['image_url']): ?>
+                                            <small style="display:block;color:var(--muted);margin-top:0.25rem;">Current image: <?php echo h($editProduct['image_url']); ?></small>
+                                        <?php endif; ?>
+                                    </label>
+                                    <label>Quantity
+                                        <input type="number" name="quantity" min="0" value="<?php echo (int)($editProduct['quantity'] ?? 0); ?>" required>
+                                    </label>
+                                    <label class="checkbox">
+                                        <input type="checkbox" name="is_active" <?php echo ($editProduct['is_active'] ?? 1) ? 'checked' : ''; ?>> Active
+                                        <span style="color:var(--muted);font-size:0.8rem;display:block;margin-top:0.25rem;"></span>
+                                    </label>
+                                    <div class="form-buttons">
+                                        <button type="submit"><?php echo $editProduct ? 'Update Product' : 'Add Product'; ?></button>
+                                        <a href="index.php?page=admin&tab=products" class="button button-secondary">Cancel</a>
+                                    </div>
+                                </form>
+                            </div>
+                        <?php endif; ?>
                     </div>
 
                 <?php elseif ($tab === 'users'): ?>
