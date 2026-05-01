@@ -322,9 +322,14 @@ input:focus {
 .product-grid {
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 270px));
 }
 
+@media (max-width: 500px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+}
 .product-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -733,7 +738,7 @@ input:focus {
 
 .summary-card p {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.125rem;
     font-weight: 700;
     color: var(--primary-dark);
 }

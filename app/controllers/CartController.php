@@ -53,7 +53,7 @@ class CartController {
                         <?php endforeach; ?>
                     </div>
                     <div class="cart-actions">
-                        <button type="submit">Update Cart</button>
+                        <button type="submit" class="button">Update Cart</button>
                         <a href="index.php?page=checkout" class="button">Proceed to Checkout</a>
                     </div>
                 </form>
